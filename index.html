@@ -74,6 +74,7 @@
 
         /**
          * Google Slides 공유 링크를 전체 화면 슬라이드쇼 링크로 변환합니다.
+         * 이때 원본 링크에 슬라이드 ID가 있으면 해당 ID를 새 링크에 포함합니다.
          */
         function generateLink() {
             const originalUrl = document.getElementById('slideLink').value.trim();
@@ -90,7 +91,7 @@
                 return;
             }
 
-            // 2. URL 구조 분석 및 변환
+            // 2. URL 구조 분석 및 프레젠테이션 ID 추출
             let presentationId;
             
             // 정규식: /d/ 와 /edit 사이에 있는 ID 추출
@@ -111,10 +112,19 @@
                 return;
             }
 
-            // 3. 'present' 키워드를 사용하여 새 링크 생성
-            const newLink = `https://docs.google.com/presentation/d/${presentationId}/present`;
+            // 3. 'present' 키워드를 사용하여 새 링크 기본 URL 생성
+            let newLink = `https://docs.google.com/presentation/d/${presentationId}/present`;
 
-            // 4. 결과 업데이트
+            // 4. 원본 URL에서 슬라이드 ID(#slide=id...) 부분 추출 및 추가
+            const hashIndex = originalUrl.indexOf('#');
+            if (hashIndex !== -1) {
+                // #slide=id... 부분을 추출
+                const slideFragment = originalUrl.substring(hashIndex);
+                // 추출한 부분을 /present 링크 끝에 추가하여 특정 슬라이드에서 시작하도록 함
+                newLink += slideFragment;
+            }
+
+            // 5. 결과 업데이트
             generatedLinkInput.value = newLink;
             testLink.href = newLink;
             outputSection.classList.remove('hidden');
