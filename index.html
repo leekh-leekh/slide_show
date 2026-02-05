@@ -3,152 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Slides 슬라이드쇼 바로가기 생성기</title>
-    <!-- Tailwind CSS CDN -->
+    <title>구글 워크스페이스 링크 변환기</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
     <style>
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
 
-    <!-- Main Container -->
-    <div class="w-full max-w-2xl bg-white shadow-2xl rounded-xl p-8 space-y-8">
+    <div class="w-full max-w-2xl bg-white shadow-2xl rounded-2xl p-8 space-y-8 border border-slate-100">
         <header class="text-center">
-            <h1 class="text-3xl font-extrabold text-blue-700">Google Slides 슬라이드쇼 바로가기</h1>
-            <p class="mt-2 text-gray-600">공유 링크를 입력하면 전체 화면으로 즉시 재생되는 링크를 만들어 드립니다.</p>
+            <div class="inline-block p-3 bg-blue-50 rounded-full mb-4">
+                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="id-13 10V3L4 14h7v7l9-11h-7z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-800">구글 통합 링크 변환기</h1>
+            <p class="mt-2 text-slate-500">문서(Docs)는 <span class="font-bold text-blue-600">읽기 모드</span>로, 슬라이드(Slides)는 <span class="font-bold text-orange-500">슬라이드쇼</span>로!</p>
         </header>
 
-        <!-- Input Section -->
         <div class="space-y-4">
-            <label for="slideLink" class="block text-sm font-medium text-gray-700">Google Slides 공유 링크 (URL)</label>
-            <input type="url" id="slideLink" placeholder="예: https://docs.google.com/presentation/d/1B-ABCDEFG..."
-                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            <label for="inputLink" class="block text-sm font-semibold text-slate-700">구글 문서 또는 슬라이드 공유 링크</label>
+            <input type="url" id="inputLink" placeholder="https://docs.google.com/document/d/... 또는 /presentation/d/..."
+                   class="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-slate-50">
             
-            <button onclick="generateLink()"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-200 transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
-                링크 생성 및 테스트
+            <button onclick="processLink()"
+                    class="w-full bg-slate-800 hover:bg-black text-white font-bold py-4 rounded-xl shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-95">
+                스마트 링크 생성하기
             </button>
         </div>
 
-        <!-- Output Section -->
-        <div id="outputSection" class="hidden space-y-6 pt-4 border-t border-gray-200">
-            <h2 class="text-xl font-bold text-gray-800">결과</h2>
+        <div id="outputSection" class="hidden space-y-6 pt-6 border-t border-slate-100">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-slate-800" id="typeLabel">변환 결과</h2>
+                <span id="badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase">Docs</span>
+            </div>
 
-            <!-- Generated Link Display -->
-            <div>
-                <label for="generatedLink" class="block text-sm font-medium text-gray-700 mb-2">전체 화면 슬라이드쇼 링크</label>
+            <div class="space-y-2">
                 <div class="flex space-x-2">
                     <input type="text" id="generatedLink" readonly
-                           class="flex-grow p-3 border border-green-300 bg-green-50 rounded-l-lg text-green-800 font-mono text-sm overflow-x-scroll">
-                    <button onclick="copyToClipboard('generatedLink')"
-                            class="bg-green-500 hover:bg-green-600 text-white p-3 rounded-r-lg shadow-md transition duration-150">
+                           class="flex-grow p-4 border border-blue-100 bg-blue-50 rounded-xl text-blue-900 font-mono text-sm">
+                    <button onclick="copyToClipboard()"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-xl font-bold transition duration-150 shadow-md">
                         복사
                     </button>
                 </div>
             </div>
 
-            <!-- Test and Go Button -->
             <a id="testLink" href="#" target="_blank"
-               class="block text-center bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-200 transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50">
-                새 창에서 슬라이드쇼 테스트 🚀
+               class="block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition duration-200">
+                새 창에서 바로 확인하기 🚀
             </a>
             
-            <p id="errorMessage" class="text-sm text-red-600 bg-red-100 p-3 rounded-lg hidden"></p>
-            <p class="text-xs text-gray-500 mt-4">
-                *주의: 슬라이드쇼에서 편집화면으로 가려면 좌측하단 메뉴(…) → 더보기(…) → 편집기에서 열기를 눌러주세요.
-            </p>
+            <p id="statusMsg" class="text-sm text-center p-3 rounded-lg hidden"></p>
         </div>
     </div>
 
     <script>
-        // 에러 메시지 표시 함수
-        function showMessage(elementId, message, isError = false) {
-            const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.classList.toggle('hidden', !message);
-            element.classList.toggle('bg-red-100', isError);
-            element.classList.toggle('text-red-600', isError);
-        }
-
-        /**
-         * Google Slides 공유 링크를 전체 화면 슬라이드쇼 링크로 변환합니다.
-         * 이때 원본 링크에 슬라이드 ID가 있으면 해당 ID를 새 링크에 포함합니다.
-         */
-        function generateLink() {
-            const originalUrl = document.getElementById('slideLink').value.trim();
-            const outputSection = document.getElementById('outputSection');
-            const generatedLinkInput = document.getElementById('generatedLink');
-            const testLink = document.getElementById('testLink');
+        function showStatus(message, isError = false) {
+            const msgBox = document.getElementById('statusMsg');
+            msgBox.textContent = message;
+            msgBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
             
-            showMessage('errorMessage', '');
-            outputSection.classList.add('hidden');
-            
-            // 1. 유효성 검사
-            if (!originalUrl) {
-                showMessage('errorMessage', 'Google Slides 링크를 입력해 주세요.', true);
-                return;
-            }
-
-            // 2. URL 구조 분석 및 프레젠테이션 ID 추출
-            let presentationId;
-            
-            // 정규식: /d/ 와 /edit 사이에 있는 ID 추출
-            const editMatch = originalUrl.match(/\/d\/([a-zA-Z0-9_-]+)\/edit/);
-            // 정규식: /d/ 와 /pub 사이에 있는 ID 추출 (게시된 링크의 경우)
-            const pubMatch = originalUrl.match(/\/d\/([a-zA-Z0-9_-]+)\/pub/);
-            // 정규식: /d/ 다음에 있는 ID 추출 (일반적인 공유 링크)
-            const generalMatch = originalUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-
-            if (editMatch && editMatch[1]) {
-                presentationId = editMatch[1];
-            } else if (pubMatch && pubMatch[1]) {
-                presentationId = pubMatch[1];
-            } else if (generalMatch && generalMatch[1]) {
-                 presentationId = generalMatch[1];
+            if (isError) {
+                msgBox.classList.add('bg-red-100', 'text-red-700');
             } else {
-                showMessage('errorMessage', '유효한 Google Slides 공유 링크 형식이 아닙니다. "docs.google.com/presentation/d/"를 포함하는지 확인해 주세요.', true);
+                msgBox.classList.add('bg-green-100', 'text-green-700');
+            }
+        }
+
+        function processLink() {
+            const url = document.getElementById('inputLink').value.trim();
+            const outputSection = document.getElementById('outputSection');
+            const generatedInput = document.getElementById('generatedLink');
+            const testLink = document.getElementById('testLink');
+            const badge = document.getElementById('badge');
+            
+            showStatus(''); // 초기화
+            
+            if (!url) {
+                alert('링크를 입력해주세요!');
                 return;
             }
 
-            // 3. 'present' 키워드를 사용하여 새 링크 기본 URL 생성
-            let newLink = `https://docs.google.com/presentation/d/${presentationId}/present`;
+            let newLink = '';
+            let type = '';
 
-            // 4. 원본 URL에서 슬라이드 ID(#slide=id...) 부분 추출 및 추가
-            const hashIndex = originalUrl.indexOf('#');
-            if (hashIndex !== -1) {
-                // #slide=id... 부분을 추출
-                const slideFragment = originalUrl.substring(hashIndex);
-                // 추출한 부분을 /present 링크 끝에 추가하여 특정 슬라이드에서 시작하도록 함
-                newLink += slideFragment;
+            // 1. 슬라이드 판별 (presentation)
+            if (url.includes('/presentation/d/')) {
+                const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (idMatch) {
+                    newLink = `https://docs.google.com/presentation/d/${idMatch[1]}/present`;
+                    // 특정 슬라이드 ID(#slide=id...) 유지
+                    const hash = url.indexOf('#');
+                    if (hash !== -1) newLink += url.substring(hash);
+                    
+                    type = 'Slides';
+                    badge.textContent = 'Slides (슬라이드쇼)';
+                    badge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase bg-orange-100 text-orange-700';
+                }
+            } 
+            // 2. 문서 판별 (document)
+            else if (url.includes('/document/d/')) {
+                const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (idMatch) {
+                    newLink = `https://docs.google.com/document/d/${idMatch[1]}/preview`;
+                    type = 'Docs';
+                    badge.textContent = 'Docs (읽기 모드)';
+                    badge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase bg-blue-100 text-blue-700';
+                }
             }
 
-            // 5. 결과 업데이트
-            generatedLinkInput.value = newLink;
-            testLink.href = newLink;
-            outputSection.classList.remove('hidden');
+            if (newLink) {
+                generatedInput.value = newLink;
+                testLink.href = newLink;
+                outputSection.classList.remove('hidden');
+            } else {
+                alert('지원하지 않는 링크 형식입니다. 구글 문서나 슬라이드 주소를 넣어주세요.');
+                outputSection.classList.add('hidden');
+            }
         }
 
-        /**
-         * 클립보드 복사 기능
-         */
-        function copyToClipboard(elementId) {
-            const copyText = document.getElementById(elementId);
-            
-            // 텍스트 선택 및 복사
+        function copyToClipboard() {
+            const copyText = document.getElementById('generatedLink');
             copyText.select();
-            copyText.setSelectionRange(0, 99999); // 모바일 지원
-
-            try {
-                // execCommand 사용 (iframe 환경에서 navigator.clipboard보다 안정적)
-                document.execCommand('copy');
-                showMessage('errorMessage', '링크가 클립보드에 복사되었습니다!', false);
-                // 성공 메시지를 잠시 후 숨김
-                setTimeout(() => showMessage('errorMessage', ''), 3000); 
-            } catch (err) {
-                showMessage('errorMessage', '복사 실패: 브라우저가 클립보드 접근을 허용하지 않습니다.', true);
-            }
+            document.execCommand('copy');
+            
+            showStatus('클립보드에 링크가 복사되었습니다! ✅');
+            setTimeout(() => { document.getElementById('statusMsg').classList.add('hidden'); }, 3000);
         }
     </script>
 </body>
